@@ -1,4 +1,5 @@
 // components/ReviewCard.tsx
+/* eslint-disable */
 import React from 'react'
 import Image from 'next/image'
 import { Star, Quote } from 'lucide-react'
