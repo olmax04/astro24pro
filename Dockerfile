@@ -34,15 +34,17 @@ RUN groupadd -r -g 1001 nodejs && \
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# --- [1] ВАЖНО: Копируем папку с миграциями ---
+# --- [1] Миграции ---
 COPY --from=builder --chown=nextjs:nodejs /app/src/migrations ./src/migrations
 
-# --- [2] ИСПРАВЛЕНИЕ ОШИБКИ PAYLOAD NOT FOUND ---
-# Standalone сборка удаляет CLI утилиты. Мы копируем полные node_modules,
-# чтобы команда 'payload' (и 'npm run migrate') работала.
+# --- [2] Node modules (для работы CLI) ---
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
-# Копируем standalone сборку (она перезапишет некоторые файлы, это нормально)
+# --- [3] ИСПРАВЛЕНИЕ: Копируем tsconfig.json ---
+# Payload CLI требует этот файл для понимания путей, даже в продакшене
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
+
+# Копируем standalone сборку
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
@@ -57,5 +59,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# --- [3] Команда запуска ---
+# Команда запуска
 CMD ["sh", "-c", "npm run migrate && node server.js"]
