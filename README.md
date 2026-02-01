@@ -1,67 +1,74 @@
-# Payload Blank Template
+# Astro24Pro Frontend
 
-This template comes configured with the bare minimum to get started on anything you need.
+Full‑stack web app for astrological services and an esoteric shop. Built on Next.js + Payload CMS with a modern UI, rich content editing, and a scalable data model for specialists, products, news, and promotions.
 
-## Quick start
+## Highlights
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- Public marketing pages with dynamic content
+- Specialist profiles and reviews
+- Shop with products, images, and status moderation
+- Rich text content via Lexical editor
+- Admin panel powered by Payload CMS
 
-## Quick Start - local setup
+## Tech Stack
 
-To spin up this template locally, follow these steps:
+- Next.js 15 (App Router)
+- React 19
+- Payload CMS 3 + @payloadcms/next
+- PostgreSQL adapter for Payload
+- Tailwind CSS 4
+- Framer Motion (UI animations)
+- Lexical / TipTap (rich text)
+- Playwright + Vitest (testing)
 
-### Clone
+## Requirements
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+- Node.js `^18.20.2 || >=20.9.0`
+- pnpm `^9 || ^10`
 
-### Development
+## Quick Start
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+1. Install dependencies:
+   - `pnpm install`
+2. Create env file:
+   - `cp .env.example .env`
+3. Start dev server:
+   - `pnpm dev`
+4. Open `http://localhost:3000`
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+## Useful Scripts
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+- `pnpm dev` — start Next.js in dev mode
+- `pnpm build` — production build
+- `pnpm start` — run production server
+- `pnpm lint` — lint checks
+- `pnpm generate:types` — generate Payload types
+- `pnpm generate:importmap` — generate Payload import map
+- `pnpm migrate` — run Payload migrations
+- `pnpm test` — run all tests (Vitest + Playwright)
 
-#### Docker (Optional)
+## Project Structure
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+```
+src/
+  app/                # Next.js routes (frontend + Payload admin)
+  collections/        # Payload collections
+  globals/            # Payload globals
+  components/         # UI components
+  blocks/             # Payload blocks
+  migrations/         # Payload migrations
+  payload.config.ts   # Payload config
+```
 
-To do so, follow these steps:
+## Environment Variables
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+See `.env.example` for required variables. Typical values include:
 
-## How it works
+- `PAYLOAD_SECRET`
+- `DATABASE_URL`
+- `NEXT_PUBLIC_SERVER_URL`
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+## Development Notes
 
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+- After editing schemas, run `pnpm generate:types`.
+- After adding custom admin components, run `pnpm generate:importmap`.
