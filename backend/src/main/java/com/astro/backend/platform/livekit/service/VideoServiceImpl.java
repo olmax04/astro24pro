@@ -6,6 +6,7 @@ import io.livekit.server.RoomName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
@@ -20,7 +21,8 @@ public class VideoServiceImpl implements VideoService {
         );
 
         accessToken.setName(username);
-        accessToken.setIdentity(username);
+        accessToken.setIdentity("identity");
+        accessToken.setMetadata("metadata");
         accessToken.addGrants(new RoomJoin(true), new RoomName(roomName));
         return accessToken.toJwt();
     }

@@ -5,14 +5,14 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-import { Users } from '@/payload/collections/Users'
-import { Media } from '@/payload/collections/Media'
-import { News } from '@/payload/collections/News'
-import { Promotions } from '@/payload/globals/promotions'
-import { Products } from '@/payload/collections/Products'
-import { Promocodes } from '@/payload/collections/Promocodes'
-import { Courses } from '@/payload/collections/Courses'
-import { Consultations } from '@/payload/collections/Consultations'
+import { Users } from '@/collections/Users'
+import { Media } from '@/collections/Media'
+import { News } from '@/collections/News'
+import { Promotions } from '@/globals/promotions'
+import { Products } from '@/collections/Products'
+import { Promocodes } from '@/collections/Promocodes'
+import { Courses } from '@/collections/Courses'
+import { Consultations } from '@/collections/Consultations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
