@@ -38,7 +38,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      target: runner
     container_name: astro-frontend
     ports:
       - '3000:3000'
@@ -48,6 +48,18 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
+  migrator:
+    build:
+          context: ./frontend
+          target: builder
+    command: pnpm run migrate
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - PAYLOAD_SECRET=${PAYLOAD_SECRET}
+    depends_on:
+      - postgres
+    networks:
+      - default  
 
 volumes:
   pgdata:

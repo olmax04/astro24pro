@@ -5,7 +5,7 @@ import { Inter, Playfair_Display } from 'next/font/google' // Импорт шр�
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import './styles.css'
-import { AuthProvider } from '../../components/providers/AuthProvider'
+import { AuthProvider } from '@/components/providers/AuthProvider'
 
 // Настройка шрифта для основного текста (Sans)
 const inter = Inter({

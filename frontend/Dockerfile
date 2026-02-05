@@ -2,59 +2,64 @@
 
 FROM node:23-slim AS base
 
-# Install dependencies only when needed
-FROM base AS deps
-WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-# Install dependencies
-COPY package.json package-lock.json ./
-RUN npm install
 
-# Rebuild the source code only when needed
+
+
+
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY .. .
+
+COPY package.json pnpm-lock.yaml ./
+
+# 1. !!! ВОТ ЧЕГО НЕ ХВАТАЛО !!!
+# Сначала устанавливаем зависимости. Без этого шага папки node_modules нет,
+# и команда 'next build' не может найти файл запуска 'next'.
+RUN pnpm install --frozen-lockfile --prod=false
+
+# 2. Теперь копируем исходный код
+COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+RUN pnpm run build
 
-# Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Создаем пользователя
 RUN groupadd -r -g 1001 nodejs && \
     useradd -r -u 1001 -g nodejs nextjs
 
-# Права на кэш
+RUN mkdir -p /home/nextjs/.cache && \
+    chown -R nextjs:nodejs /home/nextjs
+
+ENV HOME=/home/nextjs    
+
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# --- [1] Node modules (для работы CLI и зависимостей) ---
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-
-# --- [2] TS Config (чтобы CLI понимал пути) ---
-COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
-
-# --- [3] Миграции (файлы SQL/TS) ---
-COPY --from=builder --chown=nextjs:nodejs /app/src/migrations ./src/migrations
-
-# --- [4] ИСПРАВЛЕНИЕ: Копируем весь SRC ---
-# Payload CLI требует доступа к src/payload.config.ts и вашим коллекциям,
-# чтобы сгенерировать схему базы данных.
-COPY --from=builder --chown=nextjs:nodejs /app/src ./src
-
-# Копируем standalone сборку Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 
-# Копируем package.json
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
-COPY --from=builder --chown=nextjs:nodejs /app/package-lock.json ./
+# COPY --from=builder --chown=nextjs:nodejs /app/src ./src
+
+# # Копируем standalone сборку Next.js
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# # Копируем package.json
+# COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+
+# COPY --from=builder --chown=nextjs:nodejs /app/postcss.config.js ./postcss.config.js
+
+# COPY ./next-env.d.ts ./next-env.d.ts
 
 USER nextjs
 
@@ -64,4 +69,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Команда запуска
-CMD ["sh", "-c", "npm run migrate && node server.js"]
+CMD ["node", "server.js"]
