@@ -24,6 +24,8 @@ RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ARG NEXT_PUBLIC_LIVEKIT_URL
+ENV NEXT_PUBLIC_LIVEKIT_URL=$NEXT_PUBLIC_LIVEKIT_URL
 
 RUN pnpm run build
 

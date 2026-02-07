@@ -66,7 +66,6 @@ export const SpecialistCard: React.FC<SpecialistCardProps> = ({ data }) => {
     rating: staticRating = 0, // Переименовали для ясности
     reviewsCount: staticCount = 0,
   } = data
-  console.log(imageUrl)
   // --- ЛОГИКА РАСЧЕТА РЕЙТИНГА ---
   // Если есть массив отзывов, считаем по нему. Если нет - берем статику.
   const hasReviews = reviews.length > 0

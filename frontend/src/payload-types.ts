@@ -142,9 +142,9 @@ export interface User {
   patronymic?: string | null;
   role: 'client' | 'specialist' | 'moderator' | 'admin';
   specialistDetails?: {
-    specialization: string;
-    experience: number;
-    biography: {
+    specialization?: string | null;
+    experience?: number | null;
+    biography?: {
       root: {
         type: string;
         children: {
@@ -158,9 +158,9 @@ export interface User {
         version: number;
       };
       [k: string]: unknown;
-    };
-    serviceCost: {
-      amount: number;
+    } | null;
+    serviceCost?: {
+      amount?: number | null;
       currency?: ('RUB' | 'USD' | 'EUR') | null;
     };
     reviews?:
